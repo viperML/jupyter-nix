@@ -2,17 +2,21 @@
   devShells.default = with pkgs;
     mkShell rec {
       myPython = python3.withPackages (p: [
-        p.jupyter
+        p.jupyter-core
       ]);
 
-      packages = [
-        myPython
-        ruff
-      ];
+      env = buildEnv {
+        name = "shell-env";
+        paths = [
+          myPython
+          julia-bin
+        ];
+      };
+
+      packages = [env];
 
       shellHook = ''
-        venv="$(cd $(dirname $(which python)); cd ..; pwd)"
-        ln -Tsf "$venv" .venv
+        ln -Tsf ${env} .venv
       '';
     };
 }
